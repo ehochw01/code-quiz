@@ -13,7 +13,6 @@ THEN I can save my initials and my score
 */
 
 //initialize questions object
-
 const question1 = {
     question: "A very useful tool used during development and debugging for printing content to the debugger is:",
     answerChoices: ["Javascipt", "terminal/bash", "for loops", "console.log"],
@@ -42,12 +41,12 @@ const question5 = {
 
 var questions = [question1, question2, question3, question4, question5];
 
-var player = {
-    correct: [],
-    incorrect: [],
-    score: 0
-};
+var quizCompleted = false;
 
+// initialize score / time to 0
+var scoreTime = 0;
+
+// global var to keep track of which question number we're on
 var questionNum = 0;
 
 // intialize start screen
@@ -64,56 +63,87 @@ startButton.addEventListener("click", function(event) {
 // start timer
 // render the first question
 function startGame() {
+    startTimer();
     nextQuestion();
 }
 // start the timer 
 function startTimer() {
-    console.log("starting the timer");
+    // console.log("starting the timer");
     // set the starting time
+    scoreTime = 75;
+    var timeEl = document.getElementById("timer");
+    timeEl.textContent = "Time: " + scoreTime;
+    var timerInterval = setInterval(function() {
+        // take a second off the time left
+        scoreTime--;
+        // update the displayed time left
+        timeEl.textContent = "Time: " + scoreTime;
+
+        if(scoreTime === 0 || quizCompleted) {
+            // Stops execution of action at set interval
+            clearInterval(timerInterval);
+            // clears the screen of current question
+            qDiv = document.getElementById("question");
+            if (qDiv != null) {
+                qDiv.remove();
+            }
+            // stops the game
+            console.log("Calling game over within timer");
+            gameOver();
+        }
+    }, 1000);
+
+
 }
 
 function nextQuestion(){
-    console.log("nextQuestion");
+    // console.log("nextQuestion");
     questionNum++;
+    // check if the user answered all 5 questions
     if (questionNum > 5) {
+        quizCompleted = true;
         return;
     }
-    console.log("questionNum: " + questionNum);
+
+    // create question div
+    var qDiv = document.createElement("div");
+    qDiv.setAttribute("id", "question");
+    document.body.appendChild(qDiv)
     var qObj = questions[questionNum-1];
     // get the question
     var qText = document.createElement("h2");
     qText.textContent = qObj.question;
     // render it to the page
-    document.body.appendChild(qText);
-    generateAnswerButtons();
+    qDiv.appendChild(qText);
+    // call generateAnswerButtons and send it the question div we created
+    generateAnswerButtons(qDiv);
 }
 
-function generateAnswerButtons() {
-    console.log("generateAnswerButtons");
+function generateAnswerButtons(qDiv) {
     var button1 = renderAnswerChoice(1);
     button1.onclick = function(){
         // call checkCorrectAnswer passing the answer choice that the user chose
         checkCorrectAnswer(questions[questionNum-1].answerChoices[0]);
     };
-    document.body.appendChild(button1);
+    qDiv.appendChild(button1);
     var button2 = renderAnswerChoice(2);
     button2.onclick = function(){
         // call checkCorrectAnswer passing the answer choice that the user chose
         checkCorrectAnswer(questions[questionNum-1].answerChoices[1]);
     };
-    document.body.appendChild(button2);
+    qDiv.appendChild(button2);
     var button3 = renderAnswerChoice(3);
     button3.onclick = function(){
         // call checkCorrectAnswer passing the answer choice that the user chose
         checkCorrectAnswer(questions[questionNum-1].answerChoices[2]);
     };
-    document.body.appendChild(button3);
+    qDiv.appendChild(button3);
     var button4 = renderAnswerChoice(4);
     button4.onclick = function(){
         // call checkCorrectAnswer passing the answer choice that the user chose
         checkCorrectAnswer(questions[questionNum-1].answerChoices[3]);
     };
-    document.body.appendChild(button4);
+    qDiv.appendChild(button4);
 
 }
 
@@ -125,7 +155,6 @@ function renderAnswerChoice(answerChoiceNum) {
     answerChoice = answerChoiceNum + ". " + answerChoice;
     // add the answer choice to the html
     button.innerHTML = answerChoice;
-    // button.setAttribute("choice-number", i+1);
     return button;
 }
 
@@ -133,11 +162,23 @@ function checkCorrectAnswer(userAnswer){
     // get the correct answer of question questionNum from the questions object
     var correctAnswer = questions[questionNum-1].correctAnswer;
     // compare the right answer to the answer the user chose
+
     if (userAnswer == correctAnswer) {
         console.log("Correct!");
     }
     else {
         console.log("Wrong!");
+        scoreTime = scoreTime - 10;
     }
+    // remove the current question from the page before going on to the next question 
+    qDiv = document.getElementById("question");
+    qDiv.remove();
+    //
     nextQuestion();
 }
+
+function gameOver() {
+    console.log("Game Over");
+
+}
+
