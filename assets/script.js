@@ -40,17 +40,19 @@ var questions = [question1, question2, question3, question4, question5];
 console.log(questions);
 
 // intialize start screen
-
+var startButton = document.getElementById("start-quiz");
 // if button start button is pressed
-
-    // start game
-
+startButton.addEventListener("click", function(event) {
+    startGame();
+});
 
 // start timer
 // render the first question
 function startGame() {
     console.log("start game");
-
+    // wipe out start screen  
+    var startScreen = document.querySelector("#start-screen");
+    startScreen.remove();
 }
 // start the timer 
 function startTimer() {
