@@ -42,6 +42,14 @@ const question5 = {
 
 var questions = [question1, question2, question3, question4, question5];
 
+var player = {
+    correct: [],
+    incorrect: [],
+    score: 0
+};
+
+var questionNum = 0;
+
 // intialize start screen
 var startButton = document.getElementById("start-quiz");
 // if button start button is pressed
@@ -56,10 +64,7 @@ startButton.addEventListener("click", function(event) {
 // start timer
 // render the first question
 function startGame() {
-    console.log("start game");
-    renderQuestion(0);
-    renderAnswerChoices(0);
-   
+    nextQuestion();
 }
 // start the timer 
 function startTimer() {
@@ -67,27 +72,72 @@ function startTimer() {
     // set the starting time
 }
 
-function renderQuestion(questionNum){
-    console.log("renderQuestion");
-    var qObj = questions[0];
+function nextQuestion(){
+    console.log("nextQuestion");
+    questionNum++;
+    if (questionNum > 5) {
+        return;
+    }
+    console.log("questionNum: " + questionNum);
+    var qObj = questions[questionNum-1];
     // get the question
     var qText = document.createElement("h2");
     qText.textContent = qObj.question;
     // render it to the page
     document.body.appendChild(qText);
+    generateAnswerButtons();
 }
 
-function renderAnswerChoices(questionNum) {
-    console.log("renderAnswerChoices");
+function generateAnswerButtons() {
+    console.log("generateAnswerButtons");
+    var button1 = renderAnswerChoice(1);
+    button1.onclick = function(){
+        // call checkCorrectAnswer passing the answer choice that the user chose
+        checkCorrectAnswer(questions[questionNum-1].answerChoices[0]);
+    };
+    document.body.appendChild(button1);
+    var button2 = renderAnswerChoice(2);
+    button2.onclick = function(){
+        // call checkCorrectAnswer passing the answer choice that the user chose
+        checkCorrectAnswer(questions[questionNum-1].answerChoices[1]);
+    };
+    document.body.appendChild(button2);
+    var button3 = renderAnswerChoice(3);
+    button3.onclick = function(){
+        // call checkCorrectAnswer passing the answer choice that the user chose
+        checkCorrectAnswer(questions[questionNum-1].answerChoices[2]);
+    };
+    document.body.appendChild(button3);
+    var button4 = renderAnswerChoice(4);
+    button4.onclick = function(){
+        // call checkCorrectAnswer passing the answer choice that the user chose
+        checkCorrectAnswer(questions[questionNum-1].answerChoices[3]);
+    };
+    document.body.appendChild(button4);
+
+}
+
+function renderAnswerChoice(answerChoiceNum) {
     // render the 4 AnswerChoices from the questions global object
-    for (var i=0; i < 4; i++) {
-        var button = document.createElement('button');
-        button.innerHTML = questions[questionNum].answerChoices[i];
-        button.onclick = function(){
-            alert('here be dragons');return false;
-        };
-        // you can append it to another element just by doing something like
-        // document.getElementById('foobutton').appendChild(button);
-        document.body.appendChild(button);
-     }
+    var button = document.createElement('button');
+    // add a number in front of the answer choice
+    var answerChoice = questions[questionNum-1].answerChoices[answerChoiceNum-1];
+    answerChoice = answerChoiceNum + ". " + answerChoice;
+    // add the answer choice to the html
+    button.innerHTML = answerChoice;
+    // button.setAttribute("choice-number", i+1);
+    return button;
+}
+
+function checkCorrectAnswer(userAnswer){
+    // get the correct answer of question questionNum from the questions object
+    var correctAnswer = questions[questionNum-1].correctAnswer;
+    // compare the right answer to the answer the user chose
+    if (userAnswer == correctAnswer) {
+        console.log("Correct!");
+    }
+    else {
+        console.log("Wrong!");
+    }
+    nextQuestion();
 }
