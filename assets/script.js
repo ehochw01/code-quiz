@@ -51,6 +51,10 @@ var score = 0;
 var questionNum = 0;
 
 // intialize start screen
+// hide the initialsForm which will be used later
+var initialsForm = document.getElementById("initials-form");
+initialsForm.style.display = "none";
+
 var startButton = document.getElementById("start-quiz");
 // if button start button is pressed
 startButton.addEventListener("click", function(event) {
@@ -75,8 +79,7 @@ function startTimer() {
     var timeEl = document.getElementById("timer");
     timeEl.textContent = "Time: " + time;
     var timerInterval = setInterval(function() {
-        // take a second off the time left
-        time--;
+       
         // update the displayed time left
         timeEl.textContent = "Time: " + time;
 
@@ -89,10 +92,13 @@ function startTimer() {
             if (qDiv != null) {
                 qDiv.remove();
             }
+            // removes the timer from the screen
             timeEl.remove();
             // stops the game
             gameOver();
         }
+         // take a second off the time left
+         time--;
     }, 1000);
 
 
@@ -104,6 +110,7 @@ function nextQuestion(){
     // check if the user answered all 5 questions
     if (questionNum > 5) {
         quizCompleted = true;
+        // set the user's score
         score = time;
         document.getElementById("timer").remove();
         return;
@@ -175,6 +182,10 @@ function checkCorrectAnswer(userAnswer){
         console.log("Wrong!");
         timeEl.style.color = "red";
         time = time - 10;
+        // make sure that time can't get less than 0
+        if(time < 0) {
+            time = 0;
+        }
         timeEl.textContent = "Time: " + time;
     }
     // remove the current question from the page before going on to the next question 
@@ -186,6 +197,10 @@ function checkCorrectAnswer(userAnswer){
 
 function gameOver() {
     console.log("Game Over");
+    renderInitialsPage();
+}
+
+function renderInitialsPage() {
     var initialsDiv = document.createElement("div");
     initialsDiv.setAttribute("id", "enter-intials");
     document.body.appendChild(initialsDiv);
@@ -196,5 +211,7 @@ function gameOver() {
     finalScoreP.textContent = "Your final score is " + score;
     initialsDiv.appendChild(finalScoreP);
 
+    var initialsForm = document.getElementById("initials-form");
+    initialsForm.style.display = "block"
+    initialsDiv.appendChild(initialsForm);
 }
-
