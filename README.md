@@ -6,5 +6,7 @@ This project includes a javascript quiz game. The quiz starts when the start but
 
 I used a possibly overly-convoluted global questions object array so that the quiz will still work if questions want to be added later, or if questions want to be changed. 
 
-I ran out of time to add styling, so for now it is just basic HTML. 
+I ran out of time to add styling, so for now it is just basic HTML. There is very minimal styling in the assets/style.css file.
+
+Javscript can be found in assets/script.js.
 
