@@ -1,17 +1,3 @@
-/*
-GIVEN I am taking a code quiz
-WHEN I click the start button
-THEN a timer starts and I am presented with a question
-WHEN I answer a question
-THEN I am presented with another question
-WHEN I answer a question incorrectly
-THEN time is subtracted from the clock
-WHEN all questions are answered or the timer reaches 0
-THEN the game is over
-WHEN the game is over
-THEN I can save my initials and my score
-*/
-
 //initialize questions object
 const question1 = {
     question: "A very useful tool used during development and debugging for printing content to the debugger is:",
@@ -48,26 +34,30 @@ var user = {
 
 var quizCompleted = false;
 
-// initialize score / time to 0
+// initialize time to 0
 var time = 0;
 
 // global var to keep track of which question number we're on
 var questionNum = 0;
 
-// intialize start screen
-// hide the initialsForm which will be used later
-var initialsForm = document.getElementById("initials-form");
-initialsForm.style.display = "none";
+initializeStartPage();
 
-var startButton = document.getElementById("start-quiz");
-// if button start button is pressed
-startButton.addEventListener("click", function(event) {
-     // wipe out start screen  
-    var startScreen = document.querySelector("#start-screen");
-    startScreen.remove();
-    // start game
-    startGame();
-});
+function initializeStartPage(){
+    // intialize start screen
+    // hide the initialsForm which will be used later
+    var initialsForm = document.getElementById("initials-form");
+    initialsForm.style.display = "none";
+
+    var startButton = document.getElementById("start-quiz");
+    // if button start button is pressed
+    startButton.addEventListener("click", function(event) {
+        // wipe out start screen  
+        var startScreen = document.querySelector("#start-screen");
+        startScreen.remove();
+        // start game
+        startGame();
+    });
+}
 
 // start timer
 // render the first question
@@ -202,31 +192,40 @@ function checkCorrectAnswer(userAnswer){
 function gameOver() {
     console.log("Game Over");
     renderInitialsPage();
+
+    // adds an onclick event listener for the submit button for when the user enters their initials
     var submitButton = document.getElementById("submit-button");
     submitButton.addEventListener("click", function () {
         user.initials = document.querySelector("#initials").value;
+        // validates user input
         if (user.initials == "" || user.initials.length > 3) {
             alert("Please enter valid initials or hit cancel");
         } else {
+            // if input is valid, store their score
             var HighScores = storeScore();
             // clear initials screen before displaying scores
             document.querySelector("#enter-intials").remove();
+            // display the high scores
             displayScores(HighScores);
         }
     });
 }
 
 function renderInitialsPage() {
+    // creates initials page div
     var initialsDiv = document.createElement("div");
     initialsDiv.setAttribute("id", "enter-intials");
     document.body.appendChild(initialsDiv);
+    // adds "all done" to page
     var allDone = document.createElement("h2");
     allDone.textContent = "All Done!";
     initialsDiv.appendChild(allDone);
     var finalScoreP = document.createElement("p");
+    // display final score
     finalScoreP.textContent = "Your final score is " + user.score;
     initialsDiv.appendChild(finalScoreP);
 
+    // make the initials form appear so user can enter their initials
     var initialsForm = document.getElementById("initials-form");
     initialsForm.style.display = "block";
     initialsDiv.appendChild(initialsForm);
@@ -241,7 +240,7 @@ function storeScore() {
         localStorage.setItem("high-scores", JSON.stringify(HighScores));
         return HighScores;
     } 
-    // order the HighScores array by user score
+    // order the HighScores array by user score, lowest to highest
     var highestScore = true;
     for(var i=0; i < HighScores.length; i++) {
         if (HighScores[i].score >= user.score) {
@@ -250,16 +249,19 @@ function storeScore() {
             break;
         }
     }
+    // if the user's high score is the highest out of the high scores, put it at the end of the HighScores array
     if (highestScore == true) {
         HighScores.push(user);
     }
 
+    //stpre the newly ordered highscores array in localstorage
     localStorage.setItem("high-scores", JSON.stringify(HighScores));
     return HighScores;
     
 }
 
 function displayScores(HighScores){
+    // create html elements for Highscores page
     console.log("displayScores");
     var scoresPage = document.createElement("div");
     scoresPage.setAttribute("id", "scores-page");
@@ -267,15 +269,44 @@ function displayScores(HighScores){
     var hs = document.createElement("h2");
     hs.textContent = "Highscores";
     scoresPage.appendChild(hs);
+    // create a ordered list to display the high scores
     var scoreList = document.createElement("ol");
     scoreList.setAttribute("id", "scores-list");
+    // make it a numbered list
     scoreList.setAttribute("type", "1");
     scoresPage.appendChild(scoreList);
-    
+    // go through the Highscores array backwards since to display stores highest to lowest
     for(var i=HighScores.length-1; i >= 0; i--) {
         var userObj = HighScores[i];
         var li = document.createElement("li");
         li.textContent = userObj.initials + " - " + userObj.score;
         scoreList.appendChild(li);
     }
+
+    // create go back button
+    var goBack = document.createElement("button");
+    goBack.setAttribute("id", "go-back");
+    goBack.setAttribute("type", "Button");
+    goBack.textContent = "Go Back";
+    scoresPage.appendChild(goBack);
+
+    goBack.addEventListener("click", function () {
+        location.reload();
+    });
+
+
+    // create Clear HighScores button
+    var clearHighScore = document.createElement("button");
+    clearHighScore.setAttribute("id", "clear-highscore");
+    clearHighScore.setAttribute("type", "Button");
+    clearHighScore.textContent = "Clear Highscores";
+    scoresPage.appendChild(clearHighScore);
+
+    // if Clear HighScores is clicked, it deletes the high scores from local storage
+    clearHighScore.addEventListener("click", function () {
+        HighScores = [];
+        localStorage.removeItem("high-scores");
+        scoreList.style.visibility = 'hidden';
+    });
+
 }
