@@ -41,11 +41,15 @@ const question5 = {
 
 var questions = [question1, question2, question3, question4, question5];
 
+var user = {
+    initials: "",
+    score: 0
+}
+
 var quizCompleted = false;
 
 // initialize score / time to 0
 var time = 0;
-var score = 0;
 
 // global var to keep track of which question number we're on
 var questionNum = 0;
@@ -75,7 +79,7 @@ function startGame() {
 function startTimer() {
     // console.log("starting the timer");
     // set the starting time
-    time = 1;
+    time = 75;
     var timeEl = document.getElementById("timer");
     timeEl.textContent = "Time: " + time;
     var timerInterval = setInterval(function() {
@@ -111,7 +115,7 @@ function nextQuestion(){
     if (questionNum > 5) {
         quizCompleted = true;
         // set the user's score
-        score = time;
+        user.score = time;
         document.getElementById("timer").remove();
         return;
     }
@@ -198,6 +202,18 @@ function checkCorrectAnswer(userAnswer){
 function gameOver() {
     console.log("Game Over");
     renderInitialsPage();
+    var submitButton = document.getElementById("submit-button");
+    submitButton.addEventListener("click", function () {
+        user.initials = document.querySelector("#initials").value;
+        if (user.initials == "" || user.initials.length > 3) {
+            alert("Please enter valid initials or hit cancel");
+        } else {
+            var HighScores = storeScore();
+            // clear initials screen before displaying scores
+            document.querySelector("#enter-intials").remove();
+            displayScores(HighScores);
+        }
+    });
 }
 
 function renderInitialsPage() {
@@ -208,10 +224,58 @@ function renderInitialsPage() {
     allDone.textContent = "All Done!";
     initialsDiv.appendChild(allDone);
     var finalScoreP = document.createElement("p");
-    finalScoreP.textContent = "Your final score is " + score;
+    finalScoreP.textContent = "Your final score is " + user.score;
     initialsDiv.appendChild(finalScoreP);
 
     var initialsForm = document.getElementById("initials-form");
-    initialsForm.style.display = "block"
+    initialsForm.style.display = "block";
     initialsDiv.appendChild(initialsForm);
+}
+
+function storeScore() {
+    console.log("storeScore");
+    var HighScores = JSON.parse(localStorage.getItem("high-scores"));
+    if (HighScores == null){
+        HighScores = [];
+        HighScores.push(user);
+        localStorage.setItem("high-scores", JSON.stringify(HighScores));
+        return HighScores;
+    } 
+    // order the HighScores array by user score
+    var highestScore = true;
+    for(var i=0; i < HighScores.length; i++) {
+        if (HighScores[i].score >= user.score) {
+            highestScore = false;
+            HighScores.splice(i, 0, user);
+            break;
+        }
+    }
+    if (highestScore == true) {
+        HighScores.push(user);
+    }
+
+    localStorage.setItem("high-scores", JSON.stringify(HighScores));
+    return HighScores;
+    
+}
+
+function displayScores(HighScores){
+    console.log("displayScores");
+    var scoresPage = document.createElement("div");
+    scoresPage.setAttribute("id", "scores-page");
+    document.body.appendChild(scoresPage);
+    var hs = document.createElement("h2");
+    hs.textContent = "Highscores";
+    scoresPage.appendChild(hs);
+    var scoreList = document.createElement("ol");
+    scoreList.setAttribute("id", "scores-list");
+    scoreList.setAttribute("type", "1");
+    scoresPage.appendChild(scoreList);
+    
+    for(var i=HighScores.length-1; i >= 0; i--) {
+        var userObj = HighScores[i];
+        var li = document.createElement("li");
+        li.textContent = userObj.initials + " - " + userObj.score;
+        scoreList.appendChild(li);
+    }
 }
