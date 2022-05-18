@@ -67,7 +67,6 @@ function startGame() {
 }
 // start the timer 
 function startTimer() {
-    // console.log("starting the timer");
     // set the starting time
     time = 75;
     var timeEl = document.getElementById("timer");
@@ -99,7 +98,6 @@ function startTimer() {
 }
 
 function nextQuestion(){
-    // console.log("nextQuestion");
     questionNum++;
     // check if the user answered all 5 questions
     if (questionNum > 5) {
@@ -169,11 +167,9 @@ function checkCorrectAnswer(userAnswer){
     var timeEl = document.getElementById("timer");
     // compare the right answer to the answer the user chose
     if (userAnswer == correctAnswer) {
-        console.log("Correct!");
         timeEl.style.color = "green";
     }
     else {
-        console.log("Wrong!");
         timeEl.style.color = "red";
         time = time - 10;
         // make sure that time can't get less than 0
@@ -190,7 +186,6 @@ function checkCorrectAnswer(userAnswer){
 }
 
 function gameOver() {
-    console.log("Game Over");
     renderInitialsPage();
 
     // adds an onclick event listener for the submit button for when the user enters their initials
@@ -232,7 +227,6 @@ function renderInitialsPage() {
 }
 
 function storeScore() {
-    console.log("storeScore");
     var HighScores = JSON.parse(localStorage.getItem("high-scores"));
     if (HighScores == null){
         HighScores = [];
@@ -262,7 +256,6 @@ function storeScore() {
 
 function displayScores(HighScores){
     // create html elements for Highscores page
-    console.log("displayScores");
     var scoresPage = document.createElement("div");
     scoresPage.setAttribute("id", "scores-page");
     document.body.appendChild(scoresPage);
