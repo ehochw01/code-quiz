@@ -44,7 +44,8 @@ var questions = [question1, question2, question3, question4, question5];
 var quizCompleted = false;
 
 // initialize score / time to 0
-var scoreTime = 0;
+var time = 0;
+var score = 0;
 
 // global var to keep track of which question number we're on
 var questionNum = 0;
@@ -70,25 +71,26 @@ function startGame() {
 function startTimer() {
     // console.log("starting the timer");
     // set the starting time
-    scoreTime = 75;
+    time = 1;
     var timeEl = document.getElementById("timer");
-    timeEl.textContent = "Time: " + scoreTime;
+    timeEl.textContent = "Time: " + time;
     var timerInterval = setInterval(function() {
         // take a second off the time left
-        scoreTime--;
+        time--;
         // update the displayed time left
-        timeEl.textContent = "Time: " + scoreTime;
+        timeEl.textContent = "Time: " + time;
 
-        if(scoreTime === 0 || quizCompleted) {
+        if(time === 0 || quizCompleted) {
             // Stops execution of action at set interval
             clearInterval(timerInterval);
             // clears the screen of current question
             qDiv = document.getElementById("question");
+            // removes the question from screen if user runs out of time
             if (qDiv != null) {
                 qDiv.remove();
             }
+            timeEl.remove();
             // stops the game
-            console.log("Calling game over within timer");
             gameOver();
         }
     }, 1000);
@@ -102,13 +104,15 @@ function nextQuestion(){
     // check if the user answered all 5 questions
     if (questionNum > 5) {
         quizCompleted = true;
+        score = time;
+        document.getElementById("timer").remove();
         return;
     }
 
     // create question div
     var qDiv = document.createElement("div");
     qDiv.setAttribute("id", "question");
-    document.body.appendChild(qDiv)
+    document.body.appendChild(qDiv);
     var qObj = questions[questionNum-1];
     // get the question
     var qText = document.createElement("h2");
@@ -161,24 +165,36 @@ function renderAnswerChoice(answerChoiceNum) {
 function checkCorrectAnswer(userAnswer){
     // get the correct answer of question questionNum from the questions object
     var correctAnswer = questions[questionNum-1].correctAnswer;
+    var timeEl = document.getElementById("timer");
     // compare the right answer to the answer the user chose
-
     if (userAnswer == correctAnswer) {
         console.log("Correct!");
+        timeEl.style.color = "green";
     }
     else {
         console.log("Wrong!");
-        scoreTime = scoreTime - 10;
+        timeEl.style.color = "red";
+        time = time - 10;
+        timeEl.textContent = "Time: " + time;
     }
     // remove the current question from the page before going on to the next question 
     qDiv = document.getElementById("question");
     qDiv.remove();
-    //
+
     nextQuestion();
 }
 
 function gameOver() {
     console.log("Game Over");
+    var initialsDiv = document.createElement("div");
+    initialsDiv.setAttribute("id", "enter-intials");
+    document.body.appendChild(initialsDiv);
+    var allDone = document.createElement("h2");
+    allDone.textContent = "All Done!";
+    initialsDiv.appendChild(allDone);
+    var finalScoreP = document.createElement("p");
+    finalScoreP.textContent = "Your final score is " + score;
+    initialsDiv.appendChild(finalScoreP);
 
 }
 
