@@ -71,7 +71,7 @@ function startGame() {
 // start the timer 
 function startTimer() {
     // set the starting time
-    time = 1999999;
+    time = 75;
     var timeEl = document.getElementById("timer");
     timeEl.textContent = "Time: " + time;
     var timerInterval = setInterval(function() {
@@ -197,6 +197,7 @@ function gameOver() {
 
     // adds an onclick event listener for the submit button for when the user enters their initials
     var submitButton = document.getElementById("submit-button");
+    submitButton.setAttribute("class", "button");
     submitButton.addEventListener("click", function () {
         user.initials = document.querySelector("#initials").value;
         // validates user input

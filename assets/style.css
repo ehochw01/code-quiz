@@ -56,6 +56,15 @@ nav {
     width: fit-content;
 }
 
+#scores-list li {
+    margin: 10px;
+    font-size: large;
+}
+
+#go-back {
+    margin: 10px;
+}
+
 
 
 
