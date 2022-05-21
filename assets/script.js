@@ -40,6 +40,9 @@ var time = 0;
 // global var to keep track of which question number we're on
 var questionNum = 0;
 
+// getting the main section of the html page to append things to
+var mainSection = document.getElementById("main-section");
+
 initializeStartPage();
 
 function initializeStartPage(){
@@ -68,7 +71,7 @@ function startGame() {
 // start the timer 
 function startTimer() {
     // set the starting time
-    time = 75;
+    time = 1999999;
     var timeEl = document.getElementById("timer");
     timeEl.textContent = "Time: " + time;
     var timerInterval = setInterval(function() {
@@ -111,7 +114,7 @@ function nextQuestion(){
     // create question div
     var qDiv = document.createElement("div");
     qDiv.setAttribute("id", "question");
-    document.body.appendChild(qDiv);
+    mainSection.appendChild(qDiv);
     var qObj = questions[questionNum-1];
     // get the question
     var qText = document.createElement("h2");
@@ -123,30 +126,33 @@ function nextQuestion(){
 }
 
 function generateAnswerButtons(qDiv) {
+    var answerChoices = document.createElement("div");
+    answerChoices.setAttribute("id", "answer-choices");
+    qDiv.appendChild(answerChoices);
     var button1 = renderAnswerChoice(1);
     button1.onclick = function(){
         // call checkCorrectAnswer passing the answer choice that the user chose
         checkCorrectAnswer(questions[questionNum-1].answerChoices[0]);
     };
-    qDiv.appendChild(button1);
+    answerChoices.appendChild(button1);
     var button2 = renderAnswerChoice(2);
     button2.onclick = function(){
         // call checkCorrectAnswer passing the answer choice that the user chose
         checkCorrectAnswer(questions[questionNum-1].answerChoices[1]);
     };
-    qDiv.appendChild(button2);
+    answerChoices.appendChild(button2);
     var button3 = renderAnswerChoice(3);
     button3.onclick = function(){
         // call checkCorrectAnswer passing the answer choice that the user chose
         checkCorrectAnswer(questions[questionNum-1].answerChoices[2]);
     };
-    qDiv.appendChild(button3);
+    answerChoices.appendChild(button3);
     var button4 = renderAnswerChoice(4);
     button4.onclick = function(){
         // call checkCorrectAnswer passing the answer choice that the user chose
         checkCorrectAnswer(questions[questionNum-1].answerChoices[3]);
     };
-    qDiv.appendChild(button4);
+    answerChoices.appendChild(button4);
 
 }
 
@@ -154,6 +160,7 @@ function renderAnswerChoice(answerChoiceNum) {
     // render the 4 AnswerChoices from the questions global object
     var button = document.createElement('button');
     // add a number in front of the answer choice
+    button.setAttribute("class", "button");
     var answerChoice = questions[questionNum-1].answerChoices[answerChoiceNum-1];
     answerChoice = answerChoiceNum + ". " + answerChoice;
     // add the answer choice to the html
@@ -210,7 +217,7 @@ function renderInitialsPage() {
     // creates initials page div
     var initialsDiv = document.createElement("div");
     initialsDiv.setAttribute("id", "enter-intials");
-    document.body.appendChild(initialsDiv);
+    mainSection.appendChild(initialsDiv);
     // adds "all done" to page
     var allDone = document.createElement("h2");
     allDone.textContent = "All Done!";
@@ -258,7 +265,7 @@ function displayScores(HighScores){
     // create html elements for Highscores page
     var scoresPage = document.createElement("div");
     scoresPage.setAttribute("id", "scores-page");
-    document.body.appendChild(scoresPage);
+    mainSection.appendChild(scoresPage);
     var hs = document.createElement("h2");
     hs.textContent = "Highscores";
     scoresPage.appendChild(hs);
@@ -278,6 +285,7 @@ function displayScores(HighScores){
 
     // create go back button
     var goBack = document.createElement("button");
+    goBack.setAttribute("class", "button");
     goBack.setAttribute("id", "go-back");
     goBack.setAttribute("type", "Button");
     goBack.textContent = "Go Back";
@@ -290,6 +298,7 @@ function displayScores(HighScores){
 
     // create Clear HighScores button
     var clearHighScore = document.createElement("button");
+    clearHighScore.setAttribute("class", "button");
     clearHighScore.setAttribute("id", "clear-highscore");
     clearHighScore.setAttribute("type", "Button");
     clearHighScore.textContent = "Clear Highscores";
